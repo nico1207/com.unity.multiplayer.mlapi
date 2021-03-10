@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using MLAPI;
 
 public class UIController : MonoBehaviour
@@ -26,6 +28,16 @@ public class UIController : MonoBehaviour
 
     private void HideButtons()
     {
-        buttonsUI.SetActive(false);
+        List<Button> buttonsList = new List<Button>(buttonsUI.gameObject.GetComponentsInChildren<Button>());
+        foreach(Button button in buttonsList)
+        {
+            if(button.gameObject.name != "TestBug")
+            {
+                button.gameObject.SetActive(false);
+            }
+        }
+
+
+        //buttonsUI.SetActive(false);
     }
 }
