@@ -4,11 +4,8 @@ using MLAPI;
 using MLAPI.Spawning;
 using MLAPI.NetworkVariable;
 
-public class InGameManager : NetworkBehaviour
+public class InGameManager : BootStrappedNetworkBehaviour
 {
-    [SerializeField]
-    private bool m_LaunchAsHostInEditor;
-
     [SerializeField]
     private bool m_ExitIfNoPlayers;
 
@@ -65,17 +62,10 @@ public class InGameManager : NetworkBehaviour
     //The local player
     private NetworkObject m_LocalPlayerObject;
 
-    private void Awake()
+
+    protected override void OnAwake()
     {
-#if UNITY_EDITOR
-        if (NetworkManager.Singleton == null)
-        {
-            GlobalGameState.s_EditorLaunchingAsHost = m_LaunchAsHostInEditor;
-            //This will automatically launch the MLAPIBootStrap and then transition directly to the scene this control is contained within (for easy development of scenes)
-            GlobalGameState.LoadBootStrapScene();
-            return;
-        }
-#endif
+        base.OnAwake();
         if (NetworkManager.Singleton.IsListening)
         {
             if (IsServer)
@@ -86,13 +76,16 @@ public class InGameManager : NetworkBehaviour
 
             m_InGameState.OnValueChanged += InGameStateValueChanged;
         }
+
     }
+
 
     /// <summary>
     /// Handle the initialization of dialog (text) and registering callbacks
     /// </summary>
-    void Start()
+    protected override void OnStart()
     {
+        base.OnStart();
         if (m_WaitingForPlayers)
         {
             m_WaitingForPlayers.enabled = true;
@@ -287,8 +280,10 @@ public class InGameManager : NetworkBehaviour
     /// <summary>
     /// We can use the Monobehaviour Update method to pump our in game networked state machine
     /// </summary>
-    void Update()
+    protected override void OnUpdate()
     {
+        base.OnUpdate();
+
         switch (m_InGameState.Value)
         {
             case InGameStates.Waiting:

@@ -339,24 +339,11 @@ public class GlobalGameState : NetworkBehaviour
         //We only should update once per changed state
         if (SceneName != string.Empty)
         {
-            if (m_CurrentMLAPIState == StateToSceneTransitionLinks.MLAPIStates.InSession || m_CurrentMLAPIState == StateToSceneTransitionLinks.MLAPIStates.Connecting)
-            {
+            //Then update the MLAPI state
+            UpdateMLAPIState(newState);
 
-                //If we are in a session or connecting, then update the state first then switch scenes
-                UpdateMLAPIState(newState);
-
-                //Start the scene switch first
-                SwitchScene(SceneName);
-
-            }
-            else
-            {
-                //Then update the MLAPI state
-                UpdateMLAPIState(newState);
-
-                //Start the scene switch first
-                SwitchScene(SceneName);
-            }
+            //Then start the scene switch 
+            SwitchScene(SceneName);
 
             m_GameState = newState;
         }

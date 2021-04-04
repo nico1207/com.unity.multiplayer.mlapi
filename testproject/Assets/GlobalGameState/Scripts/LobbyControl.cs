@@ -4,11 +4,8 @@ using MLAPI.Messaging;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyControl : NetworkBehaviour
+public class LobbyControl : BootStrappedNetworkBehaviour
 {
-    [SerializeField]
-    private bool m_LaunchAsHostInEditor;
-
     [SerializeField]
     private Text m_LobbyText;
 
@@ -24,18 +21,11 @@ public class LobbyControl : NetworkBehaviour
     /// <summary>
     /// Initialize lobby related actions as well as handle in-editor invocation of bootstrap
     /// </summary>
-    private void Awake()
+    protected override void OnAwake()
     {
+        base.OnAwake();
+
         m_ClientsInLobby = new Dictionary<ulong, bool>();
-#if UNITY_EDITOR
-        if (NetworkManager.Singleton == null)
-        {
-            GlobalGameState.s_EditorLaunchingAsHost = m_LaunchAsHostInEditor;
-            //This will automatically launch the MLAPIBootStrap and then transition directly to the scene this control is contained within (for easy development of scenes)
-            GlobalGameState.LoadBootStrapScene();
-            return;
-        }
-#endif
 
         if (NetworkManager.Singleton.IsListening)
         {
@@ -61,7 +51,8 @@ public class LobbyControl : NetworkBehaviour
     /// <summary>
     /// Just freeze and hide players upon starting
     /// </summary>
-    private void Start()
+
+    protected override void OnStart()
     {
         FreezeAndHidePlayers();
     }
@@ -120,8 +111,8 @@ public class LobbyControl : NetworkBehaviour
     /// Update our lobby
     /// (this could be actual UI elements as opposed to just text)
     /// </summary>
-    private void OnGUI()
-    {
+    protected override void UpdateGUI()
+    {        
         if (m_LobbyText != null)
         {
             m_LobbyText.text = m_UserLobbyStatusText;
@@ -280,7 +271,6 @@ public class LobbyControl : NetworkBehaviour
     }
 
     /// <summary>
-    /// OnExitLobby
     /// Transitions the local state (unless the server) to exiting, which will exit the game session and will load the scene linked to the GlobalGameState.GameStates.ExitGame state
     /// </summary>
     public void OnExitLobby()
@@ -289,10 +279,10 @@ public class LobbyControl : NetworkBehaviour
     }
 
     /// <summary>
-    /// OnDestroy
     /// Make sure to remove ourself from the client connected and client loaded scene callbacks
     /// </summary>
-    private void OnDestroy()
+
+    protected override void OnDestroyNotification()
     {
         if (NetworkManager.Singleton != null)
         {
