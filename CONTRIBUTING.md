@@ -5,6 +5,8 @@ Thank you for your interest in contributing to Unity Multiplayer Networking!
 Here are our guidlines for contributing:
 
 * [Code of Conduct](#coc)
+* [Style Guide](#style)
+* [Branching](#branch)
 * [Ways to Contribute](#ways)
 * [Issues and Bugs](#issue)
 * [Feature Requests](#feature)
@@ -15,6 +17,14 @@ Here are our guidlines for contributing:
 ## <a name="coc"></a> Code of Conduct
 
 Please help us keep MLAPI open and inclusive. Read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## <a name="style"></a> Style Guide
+
+Your contributions must follow the [styleguide](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/STYLE_GUIDE.cs).
+
+## <a name="branch"></a> Branching
+
+External pull requests has to be based on and target the ``develop`` branch.
 
 ## <a name="ways"></a> Ways to Contribute
 
