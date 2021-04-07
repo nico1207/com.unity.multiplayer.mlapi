@@ -20,7 +20,7 @@ Please help us keep MLAPI open and inclusive. Read and follow our [Code of Condu
 
 ## <a name="standards"></a> Coding Standards
 
-Your contributions must follow the [Unity C# Coding Standards](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/STYLE_GUIDE.cs).
+Your contributions must follow the [Unity C# Coding Standards](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/CODING_STANDARDS.cs).
 
 ## <a name="branch"></a> Branching
 
