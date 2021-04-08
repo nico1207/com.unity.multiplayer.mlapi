@@ -20,7 +20,7 @@ Please help us keep MLAPI open and inclusive. Read and follow our [Code of Condu
 
 ## <a name="standards"></a> Coding Standards
 
-Your contributions must follow the [Unity C# Coding Standards](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/CODING_STANDARDS.cs).
+Your contributions must follow the [Unity C# Coding Standards](CODING_STANDARDS.cs).
 
 Our standard extends Microsoft's Framework Design Guidelines, which defines a number of rules not covered by this file. (see https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/). 
 
