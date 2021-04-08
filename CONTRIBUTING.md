@@ -24,9 +24,9 @@ Your contributions must follow the [Unity C# Coding Standards](CODING_STANDARDS.
 
 Our standard extends Microsoft's Framework Design Guidelines, which defines a number of rules not covered by this file. (see https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/). 
 
-This file inlcludes a subset of the most used rules as well as any additions and exceptions to the FDG.
+[Unity Coding Standards](CODING_STANDARDS.cs) includes a subset of the most used rules as well as any additions and exceptions to the Microsoft Framework Design Guidelines (FDG).
 
-If there is any disagreement between this file and the FDG, this file always wins. Exceptions to the FDG are marked with [FDG Exception]
+If there is any disagreement between Unity Coding Standards and the Microsoft Framework Design Guidelines, Unity Coding Standards always wins. Exceptions to the FDG are marked with [FDG Exception]
 
 ## <a name="branch"></a> Branching
 
