@@ -22,11 +22,11 @@ Please help us keep MLAPI open and inclusive. Read and follow our [Code of Condu
 
 Your contributions must follow the [Unity C# Coding Standards](CODING_STANDARDS.cs).
 
-Our standard extends Microsoft's Framework Design Guidelines, which defines a number of rules not covered by this file. (see https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/). 
+Our standard extends the [Microsoft Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/), which defines a number of rules not covered by [Unity C# Coding Standards](CODING_STANDARDS.cs).
 
-[Unity Coding Standards](CODING_STANDARDS.cs) includes a subset of the most used rules as well as any additions and exceptions to the Microsoft Framework Design Guidelines (FDG).
+Unity C# Coding Standards includes a subset of the most used rules as well as any additions and exceptions to the Microsoft Framework Design Guidelines (FDG).
 
-If there is any disagreement between Unity Coding Standards and the Microsoft Framework Design Guidelines, Unity Coding Standards always wins. Exceptions to the FDG are marked with [FDG Exception]
+If there is any disagreement between [Unity C# Coding Standards](CODING_STANDARDS.cs) and the [Microsoft Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/), Unity C# Coding Standards always wins. Exceptions to the FDG are marked with [FDG Exception].
 
 ## <a name="branch"></a> Branching
 
