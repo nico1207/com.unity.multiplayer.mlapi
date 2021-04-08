@@ -15,7 +15,6 @@
 // |    - Text file encoding is UTF8 with no BOM, using LF (unix) line endings.
 // |    - 4-wide tabstops, using spaces only (no tab characters)
 // |    - No trailing whitespace on lines, but always include a single newline at the end of the file.
-// |    - (All of the above are ensured by a combination of automated tools. Make sure you have followed the setup instructions at http://confluence.hq.unity3d.com/x/ooPD.)
 // |
 // |[Files]
 // |    - No file header, copyright, etc. of any kind. Some IDE's may add them automatically - please remove them.
