@@ -5,18 +5,6 @@
 // | \___/  /_  . __/
 // |         /_/_/
 // |
-// |[About this file]
-// |    - This is a 'living document' and will be updated as our standard evolves.
-// |    - For best rendering, be sure to view this file in your text editor rather than through a web site source viewer.
-// |    - The '// |'-style comments denote documentation markup, and are not part of the actual sample.
-// |    - To avoid redundancy, rules inline in the reference code are only mentioned once. Assume they apply generally unless noted, or if obvious from the context.
-// |    - This code is only intended to demonstrate conventions, and as a result sometimes gets nonsensical. Pay no attention to the substance, only the form.
-// |    - Reasoning behind rules are not included here to save space. Ask on Q or browse 'code-conventions + c#' at https://q.unity3d.com/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%5Bcode-conventions%5D+and+%5Bc%23%5D.
-// |    - This code will always compile cleanly as a Unity script and will show as fully green in ReSharper using the Unity rule set.
-// |    - This file is currently maintained by scobi and lives in https://ono.unity3d.com/unity-extra/unity-meta/raw/@/ReferenceSource/CSharp/Assets/CSharpReference.cs.
-// |    - For clarification, or reporting of ambiguities or bugs, ask on Q or #devs-code-conventions in Slack.
-// |    - If you are writing C# intended for the Unity runtime (like UnityEngine.dll) then also read up on https://q.unity3d.com/questions/1814/what-should-i-consider-when-writing-c-code-that-wi.html
-// |
 // |[General]
 // |    - Our standard extends Microsoft's Framework Design Guidelines, which defines a number of rules not covered by this document. (see https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/).
 // |    - This document inlcludes a subset of the most used rules as well as any additions and exceptions to the FDG.
