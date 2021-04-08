@@ -22,6 +22,12 @@ Please help us keep MLAPI open and inclusive. Read and follow our [Code of Condu
 
 Your contributions must follow the [Unity C# Coding Standards](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/CODING_STANDARDS.cs).
 
+Our standard extends Microsoft's Framework Design Guidelines, which defines a number of rules not covered by this document. (see https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/). 
+
+This document inlcludes a subset of the most used rules as well as any additions and exceptions to the FDG.
+
+If there is any disagreement between this file and the FDG, this file always wins. Exceptions to the FDG are marked with [FDG Exception]
+
 ## <a name="branch"></a> Branching
 
 External pull requests has to be based on and target the ``develop`` branch.
