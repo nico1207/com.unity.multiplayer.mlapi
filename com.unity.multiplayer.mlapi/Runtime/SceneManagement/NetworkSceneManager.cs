@@ -30,6 +30,11 @@ namespace MLAPI.SceneManagement
         public delegate void SceneSwitchStartedDelegate(AsyncOperation operation);
 
         /// <summary>
+        /// Delegate for when a scene switch is about to be initiated
+        /// </summary>
+        public delegate void PreSceneSwitchStartedDelegate();
+
+        /// <summary>
         /// Event that is invoked when the scene is switched
         /// </summary>
         public static event SceneSwitchedDelegate OnSceneSwitched;
@@ -38,6 +43,12 @@ namespace MLAPI.SceneManagement
         /// Event that is invoked when a local scene switch has started
         /// </summary>
         public static event SceneSwitchStartedDelegate OnSceneSwitchStarted;
+
+        /// <summary>
+        /// Event that is invoked when a local scene switch is just about to started
+        /// </summary>
+        public static event PreSceneSwitchStartedDelegate OnPreSceneSwitchStarted;
+
 
         internal static readonly HashSet<string> RegisteredSceneNames = new HashSet<string>();
         internal static readonly Dictionary<string, uint> SceneNameToIndex = new Dictionary<string, uint>();
@@ -124,6 +135,8 @@ namespace MLAPI.SceneManagement
 
                 return null;
             }
+
+            OnPreSceneSwitchStarted?.Invoke();
 
             NetworkManager.Singleton.SpawnManager.ServerDestroySpawnedSceneObjects(); //Destroy current scene objects before switching.
             s_IsSwitching = true;
@@ -219,10 +232,15 @@ namespace MLAPI.SceneManagement
         {
             CurrentActiveSceneIndex = SceneNameToIndex[s_NextSceneName];
             var nextScene = SceneManager.GetSceneByName(s_NextSceneName);
-            SceneManager.SetActiveScene(nextScene);
 
-            // Move all objects to the new scene
-            MoveObjectsToScene(nextScene);
+            // Get any of the remaining objects spawned
+            var objectsToKeep = NetworkManager.Singleton.SpawnManager.SpawnedObjectsList;
+
+            //All do not destroy objects are moved from the temporary scene into the active scene
+            SceneManager.SetActiveScene(nextScene);           
+
+            // Move any remaining spawned objects to the new scene
+            //MoveObjectsToScene(nextScene, objectsToKeep);
 
             IsSpawnedObjectsPendingInDontDestroyOnLoad = false;
 
@@ -243,10 +261,10 @@ namespace MLAPI.SceneManagement
             // Justification: Rare alloc, could(should?) reuse
             var newSceneObjects = new List<NetworkObject>();
             {
-                var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>();
+                var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>(true);
                 for (int i = 0; i < networkObjects.Length; i++)
                 {
-                    if (networkObjects[i].IsSceneObject == null)
+                    if (networkObjects[i].IsSceneObject == null && NetworkManager.Singleton.SpawnManager.GetNetworkPrefabIndexOfHash(networkObjects[i].GlobalObjectIdHash) == -1)
                     {
                         NetworkManager.Singleton.SpawnManager.SpawnNetworkObjectLocally(networkObjects[i], NetworkManager.Singleton.SpawnManager.GetNetworkObjectId(), true, false, null, null, false, 0, false, true);
                         newSceneObjects.Add(networkObjects[i]);
@@ -349,7 +367,7 @@ namespace MLAPI.SceneManagement
 
         private static void OnSceneUnloadClient(Guid switchSceneGuid, Stream objectStream)
         {
-            var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>();
+            var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>(true);
             NetworkManager.Singleton.SpawnManager.ClientCollectSoftSyncSceneObjectSweep(networkObjects);
 
             using (var reader = PooledNetworkReader.Get(objectStream))
@@ -455,11 +473,8 @@ namespace MLAPI.SceneManagement
             }
         }
 
-        private static void MoveObjectsToScene(Scene scene)
+        private static void MoveObjectsToScene(Scene scene, HashSet<NetworkObject> objectsToKeep)
         {
-            // Move ALL NetworkObjects to the temp scene
-            var objectsToKeep = NetworkManager.Singleton.SpawnManager.SpawnedObjectsList;
-
             foreach (var sobj in objectsToKeep)
             {
                 //In case an object has been set as a child of another object it has to be unchilded in order to be moved from one scene to another.

@@ -24,7 +24,9 @@ namespace MLAPI.Configuration
         internal const byte SERVER_LOG = 23;
         internal const byte SERVER_RPC = 30;
         internal const byte CLIENT_RPC = 31;
-        internal const byte INVALID = 32;
+
+        internal const byte ENABLE_DISABLE_OBJECT = 32;
+        internal const byte INVALID = 33;
 
         internal static readonly string[] MESSAGE_NAMES =
         {
@@ -60,7 +62,8 @@ namespace MLAPI.Configuration
             "",
             "SERVER_RPC",
             "CLIENT_RPC",
-            "INVALID" // 32
+            "ENABLE_DISABLE_OBJECT",
+            "INVALID" // 33
         };
     }
 }

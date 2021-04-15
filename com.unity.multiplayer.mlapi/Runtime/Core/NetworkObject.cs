@@ -455,6 +455,10 @@ namespace MLAPI
 
         internal void InvokeBehaviourNetworkSpawn(Stream stream)
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
             for (int i = 0; i < ChildNetworkBehaviours.Count; i++)
             {
                 //We check if we are it's NetworkObject owner incase a NetworkObject exists as a child of our NetworkObject
@@ -472,6 +476,60 @@ namespace MLAPI
             }
         }
 
+        private void OnEnable()
+        {
+            if ((IsSceneObject == null || IsSceneObject.Value) && NetworkManager != null && NetworkManager.IsListening && NetworkManager.SpawnManager.GetNetworkPrefabIndexOfHash(GlobalObjectIdHash) == -1)
+            {
+                for (int i = 0; i < ChildNetworkBehaviours.Count; i++)
+                {
+                    //We check if we are it's NetworkObject owner incase a NetworkObject exists as a child of our NetworkObject
+                    if (!ChildNetworkBehaviours[i].NetworkStartInvoked)
+                    {
+                        if (!ChildNetworkBehaviours[i].InternalNetworkStartInvoked)
+                        {
+                            ChildNetworkBehaviours[i].InternalNetworkStart();
+                            ChildNetworkBehaviours[i].InternalNetworkStartInvoked = true;
+                        }
+
+                        ChildNetworkBehaviours[i].NetworkStart(null);
+                        ChildNetworkBehaviours[i].NetworkStartInvoked = true;
+                    }
+                }
+
+                if (NetworkManager.IsServer)
+                {
+                    var bufferToSend = NetworkBufferPool.GetBuffer();
+                    var bufferWriter = NetworkWriterPool.GetWriter(bufferToSend);
+                    bufferWriter.WriteUInt64Packed(NetworkObjectId);
+                    bufferWriter.WriteBool(true);
+
+                    InternalMessageSender.Send(NetworkConstants.ENABLE_DISABLE_OBJECT, NetworkChannel.Internal, bufferToSend);
+                    NetworkWriterPool.PutBackInPool(bufferWriter);
+                    NetworkBufferPool.PutBackInPool(bufferToSend);
+                }
+            }
+        }
+
+        private void OnDisable()
+        {
+            if ((IsSceneObject == null || IsSceneObject.Value) && NetworkManager != null && NetworkManager.IsListening && NetworkManager.SpawnManager.GetNetworkPrefabIndexOfHash(GlobalObjectIdHash) == -1)
+            {
+                ResetNetworkStartInvoked();
+                if (NetworkManager.IsServer)
+                {
+                    var bufferToSend = NetworkBufferPool.GetBuffer();
+                    var bufferWriter = NetworkWriterPool.GetWriter(bufferToSend);
+                    bufferWriter.WriteUInt64Packed(NetworkObjectId);
+                    bufferWriter.WriteBool(false);
+
+                    InternalMessageSender.Send(NetworkConstants.ENABLE_DISABLE_OBJECT, NetworkChannel.Internal, bufferToSend);
+                    NetworkWriterPool.PutBackInPool(bufferWriter);
+                    NetworkBufferPool.PutBackInPool(bufferToSend);
+                }
+ 
+            }
+        }
+
         private List<NetworkBehaviour> m_ChildNetworkBehaviours;
 
         internal List<NetworkBehaviour> ChildNetworkBehaviours
@@ -482,9 +540,13 @@ namespace MLAPI
                 {
                     return m_ChildNetworkBehaviours;
                 }
-
+                if ((IsSceneObject == null || IsSceneObject.Value) && !gameObject.activeInHierarchy)
+                {
+                    return null;
+                }
                 m_ChildNetworkBehaviours = new List<NetworkBehaviour>();
                 var networkBehaviours = GetComponentsInChildren<NetworkBehaviour>(true);
+
                 for (int i = 0; i < networkBehaviours.Length; i++)
                 {
                     if (networkBehaviours[i].NetworkObject == this)

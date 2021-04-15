@@ -62,6 +62,12 @@ namespace MLAPI.Spawning
             if (!m_PrefabAssetToPrefabHandler.ContainsKey(networkPrefabHash))
             {
                 m_PrefabAssetToPrefabHandler.Add(networkPrefabHash, instanceHandler);
+                //Always add the original networkPrefabHash as that will be the same on server side
+                if (!m_PrefabInstanceToPrefabAsset.ContainsKey(networkPrefabHash))
+                {
+                    m_PrefabInstanceToPrefabAsset.Add(networkPrefabHash, networkPrefabHash);
+                }
+
                 return true;
             }
 

@@ -286,7 +286,7 @@ namespace MLAPI.Spawning
                 throw new SpawnStateException("Object is already spawned");
             }
 
-            if (readNetworkVariable && NetworkManager.NetworkConfig.EnableNetworkVariable)
+            if (readNetworkVariable && NetworkManager.NetworkConfig.EnableNetworkVariable && networkObject.gameObject.activeInHierarchy)
             {
                 networkObject.SetNetworkVariableData(dataStream);
             }
@@ -484,51 +484,47 @@ namespace MLAPI.Spawning
             //This Allocation is "ok" for now because this code only executes when a new scene is switched to
             //We need to create a new copy the HashSet of NetworkObjects (SpawnedObjectsList) so we can remove
             //objects from the HashSet (SpawnedObjectsList) without causing a list has been modified exception to occur.
-            var spawnedObjects = SpawnedObjectsList.ToList();
+            //var spawnedObjects = SpawnedObjectsList.ToList();
+
+            var spawnedObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>(true);
             foreach (var sobj in spawnedObjects)
             {
                 if ((sobj.IsSceneObject != null && sobj.IsSceneObject == true) || sobj.DestroyWithScene)
                 {
+                    if (SpawnedObjectsList.Contains(sobj))
+                    {
+                        SpawnedObjectsList.Remove(sobj);
+                    }
+                            
                     if (NetworkManager.PrefabHandler.ContainsHandler(sobj))
-                    {
-                        SpawnedObjectsList.Remove(sobj);
-                        NetworkManager.PrefabHandler.HandleNetworkPrefabDestroy(sobj);
-                        OnDestroyObject(sobj.NetworkObjectId, false);
+                    { 
+                        NetworkManager.PrefabHandler.HandleNetworkPrefabDestroy(sobj);                                             
                     }
-                    else
-                    {
-                        SpawnedObjectsList.Remove(sobj);
-                        UnityEngine.Object.Destroy(sobj.gameObject);
-                    }
+                    UnityEngine.Object.DestroyImmediate(sobj.gameObject);
                 }
             }
         }
 
         internal void DestroyNonSceneObjects()
         {
-            var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>();
+            var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>(true);
 
             for (int i = 0; i < networkObjects.Length; i++)
             {
-                if (networkObjects[i].IsSceneObject != null && networkObjects[i].IsSceneObject.Value == false)
+                if ((networkObjects[i].IsSceneObject != null && networkObjects[i].IsSceneObject.Value == false) || networkObjects[i].DestroyWithScene)
                 {
                     if (NetworkManager.PrefabHandler.ContainsHandler(networkObjects[i]))
                     {
-                        NetworkManager.PrefabHandler.HandleNetworkPrefabDestroy(networkObjects[i]);
-
-                        OnDestroyObject(networkObjects[i].NetworkObjectId, false);
+                        NetworkManager.PrefabHandler.HandleNetworkPrefabDestroy(networkObjects[i]);                       
                     }
-                    else
-                    {
-                        UnityEngine.Object.Destroy(networkObjects[i].gameObject);
-                    }
+                    UnityEngine.Object.DestroyImmediate(networkObjects[i].gameObject);
                 }
             }
         }
 
         internal void DestroySceneObjects()
         {
-            var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>();
+            var networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>(true);
 
             for (int i = 0; i < networkObjects.Length; i++)
             {
@@ -583,12 +579,12 @@ namespace MLAPI.Spawning
         {
             if (networkObjects == null)
             {
-                networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>();
+                networkObjects = UnityEngine.Object.FindObjectsOfType<NetworkObject>(true);
             }
 
             for (int i = 0; i < networkObjects.Length; i++)
             {
-                if (networkObjects[i].IsSceneObject == null)
+                if (networkObjects[i].IsSceneObject == null || networkObjects[i].IsSceneObject.Value)
                 {
                     PendingSoftSyncObjects.Add(networkObjects[i].GlobalObjectIdHash, networkObjects[i]);
                 }

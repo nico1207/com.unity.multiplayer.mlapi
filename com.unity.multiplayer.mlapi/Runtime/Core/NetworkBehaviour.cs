@@ -512,17 +512,26 @@ namespace MLAPI
                         s_Touched.UnionWith(spawnedObjs);
                         foreach (var sobj in spawnedObjs)
                         {
+                            if (!sobj.gameObject.activeInHierarchy)
+                            {
+                                continue;
+                            }
                             // Sync just the variables for just the objects this client sees
                             for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
                             {
                                 sobj.ChildNetworkBehaviours[k].VariableUpdate(client.ClientId);
-                            }
+                            }                            
                         }
                     }
 
                     // Now, reset all the no-longer-dirty variables
                     foreach (var sobj in s_Touched)
                     {
+                        if (!sobj.gameObject.activeInHierarchy)
+                        {
+                            continue;
+                        }
+
                         for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
                         {
                             sobj.ChildNetworkBehaviours[k].PostNetworkVariableWrite();
@@ -534,6 +543,10 @@ namespace MLAPI
                     // when client updates the sever, it tells it about all its objects
                     foreach (var sobj in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
                     {
+                        if (!sobj.gameObject.activeInHierarchy)
+                        {
+                            continue;
+                        }
                         for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
                         {
                             sobj.ChildNetworkBehaviours[k].VariableUpdate(NetworkManager.Singleton.ServerClientId);
@@ -543,6 +556,10 @@ namespace MLAPI
                     // Now, reset all the no-longer-dirty variables
                     foreach (var sobj in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
                     {
+                        if (!sobj.gameObject.activeInHierarchy)
+                        {
+                            continue;
+                        }
                         for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
                         {
                             sobj.ChildNetworkBehaviours[k].PostNetworkVariableWrite();

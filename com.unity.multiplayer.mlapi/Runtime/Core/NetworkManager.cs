@@ -1134,7 +1134,6 @@ namespace MLAPI
                         {
                             InternalMessageHandler.HandleNetworkLog(clientId, messageStream);
                         }
-
                         break;
                     case NetworkConstants.SERVER_RPC:
                         {
@@ -1170,6 +1169,18 @@ namespace MLAPI
                                 }
                             }
 
+                            break;
+                        }
+                    case NetworkConstants.ENABLE_DISABLE_OBJECT:
+                        {
+                            var messageStreamReader = NetworkReaderPool.GetReader(messageStream);
+                            var networkObjectId = messageStreamReader.ReadUInt64Packed();
+                            var enableObject = messageStreamReader.ReadBool();
+                            if (SpawnManager.SpawnedObjects.ContainsKey(networkObjectId))
+                            {
+                                var networkObject = SpawnManager.SpawnedObjects[networkObjectId];
+                                networkObject.gameObject.SetActive(enableObject);
+                            }
                             break;
                         }
                     default:
@@ -1514,8 +1525,9 @@ namespace MLAPI
                                 writer.WriteBool(false);
                             }
 
-                            if (NetworkConfig.EnableNetworkVariable)
+                            if (NetworkConfig.EnableNetworkVariable && observedObject.gameObject.activeInHierarchy)
                             {
+                                
                                 observedObject.WriteNetworkVariableData(buffer, ownerClientId);
                             }
                         }
