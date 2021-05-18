@@ -201,6 +201,7 @@ namespace MLAPI
                 }
             }
 
+            //TODO: TO CHECK HERE ON GETTING NAME OF RPC
             writer.WriteUInt64Packed(NetworkObjectId); // NetworkObjectId
             writer.WriteUInt16Packed(NetworkBehaviourId); // NetworkBehaviourId
             writer.WriteByte((byte)clientRpcParams.Send.UpdateStage); // NetworkUpdateStage
@@ -766,7 +767,7 @@ namespace MLAPI
                     networkVariableList[i].ReadDelta(stream, networkManager.IsServer, localTick, remoteTick);
                     PerformanceDataManager.Increment(ProfilerConstants.NetworkVarDeltas);
 
-                    
+
                     ProfilerStatManager.NetworkVarsRcvd.Record();
 
                     if (networkManager.NetworkConfig.EnsureNetworkVariableLengthSafety)
