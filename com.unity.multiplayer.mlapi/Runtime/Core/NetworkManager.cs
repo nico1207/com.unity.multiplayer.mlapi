@@ -1267,7 +1267,7 @@ namespace MLAPI
                         {
                             MessageHandler.HandleAllClientsSwitchSceneCompleted(clientId, messageStream);
                         }
-                        
+
                         break;
                     case NetworkConstants.SERVER_LOG:
                         if (IsServer && NetworkConfig.EnableNetworkLogs)
@@ -1453,7 +1453,7 @@ namespace MLAPI
                     ConnectedClientsList.RemoveAt(i);
                     PerformanceDataManager.Increment(ProfilerConstants.Connections, -1);
                     ProfilerStatManager.Connections.Record(-1);
-                    NetworkMetrics.TrackConnectionCount(-1);
+                    NetworkMetrics.TrackConnectionCount(-1, clientId);
                 }
             }
 
@@ -1523,7 +1523,7 @@ namespace MLAPI
                         ConnectedClientsList.RemoveAt(i);
                         PerformanceDataManager.Increment(ProfilerConstants.Connections, -1);
                         ProfilerStatManager.Connections.Record(-1);
-                        NetworkMetrics.TrackConnectionCount(-1);
+                        NetworkMetrics.TrackConnectionCount(-1, clientId);
                         break;
                     }
                 }
@@ -1571,7 +1571,7 @@ namespace MLAPI
 
                 PerformanceDataManager.Increment(ProfilerConstants.Connections);
                 ProfilerStatManager.Connections.Record();
-                NetworkMetrics.TrackConnectionCount(1);
+                NetworkMetrics.TrackConnectionCount(1, ownerClientId);
 
                 // This packet is unreliable, but if it gets through it should provide a much better sync than the potentially huge approval message.
                 SyncTime();
