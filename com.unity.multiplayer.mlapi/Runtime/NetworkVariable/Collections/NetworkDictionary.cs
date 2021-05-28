@@ -122,7 +122,8 @@ namespace MLAPI.NetworkVariable.Collections
                                         Key = key,
                                         Value = value
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                         case NetworkDictionaryEvent<TKey, TValue>.EventType.Remove:
@@ -150,6 +151,7 @@ namespace MLAPI.NetworkVariable.Collections
                                         Key = key,
                                         Value = value
                                     });
+                                    BecameDirty?.Invoke();
                                 }
                             }
                             break;
@@ -177,7 +179,8 @@ namespace MLAPI.NetworkVariable.Collections
                                         Key = key,
                                         Value = value
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                         case NetworkDictionaryEvent<TKey, TValue>.EventType.Clear:
@@ -199,7 +202,8 @@ namespace MLAPI.NetworkVariable.Collections
                                     {
                                         Type = eventType
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                         case NetworkDictionaryEvent<TKey, TValue>.EventType.Value:
@@ -227,7 +231,8 @@ namespace MLAPI.NetworkVariable.Collections
                                         Key = key,
                                         Value = value
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                     }
@@ -396,6 +401,8 @@ namespace MLAPI.NetworkVariable.Collections
 
             return false;
         }
+
+        public event Action BecameDirty;
 
 
         /// <inheritdoc />
@@ -576,6 +583,7 @@ namespace MLAPI.NetworkVariable.Collections
                 if (m_NetworkBehaviour.NetworkManager.ConnectedClients.Count > 0)
                 {
                     m_DirtyEvents.Add(dictionaryEvent);
+                    BecameDirty?.Invoke();
                 }
 
                 OnDictionaryChanged?.Invoke(dictionaryEvent);
@@ -583,6 +591,7 @@ namespace MLAPI.NetworkVariable.Collections
             else
             {
                 m_DirtyEvents.Add(dictionaryEvent);
+                BecameDirty?.Invoke();
             }
         }
 

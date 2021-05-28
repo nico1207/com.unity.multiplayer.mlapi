@@ -85,6 +85,7 @@ namespace MLAPI.NetworkVariable
                 T previousValue = m_InternalValue;
                 m_InternalValue = value;
                 OnValueChanged?.Invoke(previousValue, m_InternalValue);
+                BecameDirty?.Invoke();
             }
         }
 
@@ -103,6 +104,8 @@ namespace MLAPI.NetworkVariable
         {
             return m_IsDirty;
         }
+
+        public event Action BecameDirty;
 
         /// <inheritdoc />
         public void ResetDirty()

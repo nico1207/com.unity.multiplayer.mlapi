@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using MLAPI.Transports;
 
@@ -24,6 +25,11 @@ namespace MLAPI.NetworkVariable
         /// </summary>
         /// <returns>Whether or not the container is dirty</returns>
         bool IsDirty();
+
+        /// <summary>
+        /// Should be called when this container becomes dirty
+        /// </summary>
+        event Action BecameDirty;
 
         /// <summary>
         /// Gets Whether or not a specific client can write to the varaible

@@ -106,6 +106,8 @@ namespace MLAPI.NetworkVariable.Collections
             return false;
         }
 
+        public event Action BecameDirty;
+
         /// <inheritdoc />
         public NetworkChannel GetChannel()
         {
@@ -255,7 +257,8 @@ namespace MLAPI.NetworkVariable.Collections
                                         Type = eventType,
                                         Value = value
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                         case NetworkSetEvent<T>.EventType.Remove:
@@ -279,7 +282,8 @@ namespace MLAPI.NetworkVariable.Collections
                                         Type = eventType,
                                         Value = value
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                         case NetworkSetEvent<T>.EventType.Clear:
@@ -301,7 +305,8 @@ namespace MLAPI.NetworkVariable.Collections
                                     {
                                         Type = eventType
                                     });
-                                }
+                                    BecameDirty?.Invoke();
+                            }
                             }
                             break;
                     }
@@ -343,6 +348,7 @@ namespace MLAPI.NetworkVariable.Collections
                 Value = item
             };
             m_DirtyEvents.Add(setEvent);
+            BecameDirty?.Invoke();
 
             if (m_NetworkBehaviour.NetworkManager.IsServer && OnSetChanged != null)
             {
@@ -436,6 +442,7 @@ namespace MLAPI.NetworkVariable.Collections
                         Value = value
                     };
                     m_DirtyEvents.Add(setEvent);
+                    BecameDirty?.Invoke();
 
                     if (m_NetworkBehaviour.NetworkManager.IsServer && OnSetChanged != null)
                     {
@@ -465,6 +472,7 @@ namespace MLAPI.NetworkVariable.Collections
                         Value = value
                     };
                     m_DirtyEvents.Add(setEvent);
+                    BecameDirty?.Invoke();
 
                     if (m_NetworkBehaviour.NetworkManager.IsServer && OnSetChanged != null)
                     {
@@ -490,6 +498,7 @@ namespace MLAPI.NetworkVariable.Collections
                 Value = item
             };
             m_DirtyEvents.Add(setEvent);
+            BecameDirty?.Invoke();
 
             if (m_NetworkBehaviour.NetworkManager.IsServer && OnSetChanged != null)
             {
@@ -514,6 +523,7 @@ namespace MLAPI.NetworkVariable.Collections
                 Type = NetworkSetEvent<T>.EventType.Clear
             };
             m_DirtyEvents.Add(setEvent);
+            BecameDirty?.Invoke();
 
             if (m_NetworkBehaviour.NetworkManager.IsServer && OnSetChanged != null)
             {
@@ -549,6 +559,7 @@ namespace MLAPI.NetworkVariable.Collections
                 Value = item
             };
             m_DirtyEvents.Add(setEvent);
+            BecameDirty?.Invoke();
 
             if (m_NetworkBehaviour.NetworkManager.IsServer && OnSetChanged != null)
             {

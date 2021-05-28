@@ -17,6 +17,7 @@ using MLAPI.Serialization.Pooled;
 using MLAPI.Spawning;
 using MLAPI.Transports;
 using Unity.Profiling;
+using Debug = UnityEngine.Debug;
 
 namespace MLAPI
 {
@@ -386,6 +387,7 @@ namespace MLAPI
         internal readonly List<INetworkVariable> NetworkVariableFields = new List<INetworkVariable>();
 
         private static HashSet<NetworkObject> s_Touched = new HashSet<NetworkObject>();
+        private static HashSet<NetworkBehaviour> s_Dirty = new HashSet<NetworkBehaviour>();
         private static Dictionary<Type, FieldInfo[]> s_FieldTypes = new Dictionary<Type, FieldInfo[]>();
 
         private static FieldInfo[] GetFieldInfoForType(Type type)
@@ -444,6 +446,7 @@ namespace MLAPI
                     }
 
                     instance.SetNetworkBehaviour(this);
+                    instance.BecameDirty += () => { s_Dirty.Add(this); };
                     NetworkVariableFields.Add(instance);
                 }
             }
@@ -500,46 +503,33 @@ namespace MLAPI
                     for (int i = 0; i < networkManager.ConnectedClientsList.Count; i++)
                     {
                         var client = networkManager.ConnectedClientsList[i];
-                        var spawnedObjs = networkManager.SpawnManager.SpawnedObjectsList;
-                        s_Touched.UnionWith(spawnedObjs);
-                        foreach (var sobj in spawnedObjs)
+                        foreach (var dirtyBehaviour in s_Dirty)
                         {
-                            // Sync just the variables for just the objects this client sees
-                            for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
-                            {
-                                sobj.ChildNetworkBehaviours[k].VariableUpdate(client.ClientId);
-                            }
+                            dirtyBehaviour.VariableUpdate(client.ClientId);
                         }
                     }
 
                     // Now, reset all the no-longer-dirty variables
-                    foreach (var sobj in s_Touched)
+                    foreach (var dirtyBehaviour in s_Dirty)
                     {
-                        for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
-                        {
-                            sobj.ChildNetworkBehaviours[k].PostNetworkVariableWrite();
-                        }
+                        dirtyBehaviour.PostNetworkVariableWrite();
                     }
+                    s_Dirty.Clear();
                 }
                 else
                 {
                     // when client updates the sever, it tells it about all its objects
-                    foreach (var sobj in networkManager.SpawnManager.SpawnedObjectsList)
+                    foreach (var dirtyBehaviour in s_Dirty)
                     {
-                        for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
-                        {
-                            sobj.ChildNetworkBehaviours[k].VariableUpdate(networkManager.ServerClientId);
-                        }
+                        dirtyBehaviour.VariableUpdate(networkManager.ServerClientId);
                     }
 
                     // Now, reset all the no-longer-dirty variables
-                    foreach (var sobj in networkManager.SpawnManager.SpawnedObjectsList)
+                    foreach (var dirtyBehaviour in s_Dirty)
                     {
-                        for (int k = 0; k < sobj.ChildNetworkBehaviours.Count; k++)
-                        {
-                            sobj.ChildNetworkBehaviours[k].PostNetworkVariableWrite();
-                        }
+                        dirtyBehaviour.PostNetworkVariableWrite();
                     }
+                    s_Dirty.Clear();
                 }
             }
             finally
